@@ -29,6 +29,12 @@ class User extends Authenticatable
         'current_position',
         'current_company',
         'phone_number',
+        'gender',
+        'birthdate',
+        'address',
+        'postcode',
+        'state',
+        'race',
         'linkedin_url',
         'bio',
     ];
@@ -54,6 +60,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'account_locked_until' => 'datetime',
+            'birthdate' => 'date',
         ];
     }
 }

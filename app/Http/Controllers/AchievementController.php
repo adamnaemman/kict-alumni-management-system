@@ -42,6 +42,7 @@ class AchievementController extends Controller
             'user_id' => auth()->id(),
             'title' => $request->title,
             'description' => $request->description,
+            'category' => $request->category,
             'event_date' => $request->event_date,
             'file_path' => $filePath,
             'image_path' => $imagePath,
@@ -82,6 +83,7 @@ class AchievementController extends Controller
         $achievement->update([
             'title' => $request->title,
             'description' => $request->description,
+            'category' => $request->category,
             'event_date' => $request->event_date,
             'file_path' => $achievement->file_path,
             'image_path' => $achievement->image_path,

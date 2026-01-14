@@ -9,6 +9,7 @@ class AlumniController extends Controller
 {
     public function dashboard()
     {
+        $user = auth()->user();
         $userId = auth()->id();
         $requests = UpdateRequest::where('user_id', $userId)->get();
 
@@ -21,7 +22,7 @@ class AlumniController extends Controller
 
         $achievements = \App\Models\Achievement::where('user_id', $userId)->latest()->get();
 
-        return view('alumni.dashboard', compact('requests', 'stats', 'achievements'));
+        return view('alumni.dashboard', compact('user', 'requests', 'stats', 'achievements'));
     }
 
     public function submitRequest(Request $request)

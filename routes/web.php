@@ -22,7 +22,7 @@ Route::middleware('auth')->group(function () {
     // Dashboard Logic
     Route::get('/dashboard', function () {
         if (auth()->user()->role === 'admin') {
-            return redirect()->route('admin.approvals');
+            return redirect()->route('admin.alumni');
         }
         return redirect()->route('alumni.dashboard');
     })->name('dashboard');
@@ -45,10 +45,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/achievements/{achievement}', [\App\Http\Controllers\AchievementController::class, 'destroy'])->name('achievements.destroy');
 
     // Admin Routes
-    Route::get('/admin/approvals', [AdminController::class, 'index'])->name('admin.approvals');
-    Route::get('/admin/request/{id}', [AdminController::class, 'show'])->name('admin.show');
-    Route::post('/admin/approve/{id}', [AdminController::class, 'approveRequest'])->name('admin.approve');
-    Route::post('/admin/reject/{id}', [AdminController::class, 'rejectRequest'])->name('admin.reject');
+    Route::get('/admin/alumni', [AdminController::class, 'alumniList'])->name('admin.alumni');
+    Route::get('/admin/alumni/{id}', [AdminController::class, 'showAlumni'])->name('admin.alumni.show');
+    Route::get('/admin/generate-report', [AdminController::class, 'generateReport'])->name('admin.generate-report');
 
     // Feedback Routes
     Route::get('/feedback', [\App\Http\Controllers\FeedbackController::class, 'create'])->name('feedback.create');

@@ -15,11 +15,13 @@ class FeedbackController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'message' => 'required|string|max:1000',
+            'rating' => 'required|integer|min:1|max:5',
+            'message' => 'nullable|string|max:1000',
         ]);
 
         Feedback::create([
             'user_id' => auth()->id(),
+            'rating' => $request->rating,
             'message' => $request->message,
         ]);
 

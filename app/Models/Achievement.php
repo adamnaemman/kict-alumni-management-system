@@ -13,6 +13,7 @@ class Achievement extends Model
         'user_id',
         'title',
         'description',
+        'category',
         'image_path',
         'event_date',
         'file_path',

@@ -32,12 +32,18 @@ class ProfileController extends Controller
             'current_position' => 'nullable|string',
             'current_company' => 'nullable|string',
             'phone_number' => 'nullable|string',
+            'gender' => 'nullable|string|in:Male,Female,Others',
+            'birthdate' => 'nullable|date',
+            'address' => 'nullable|string',
+            'postcode' => 'nullable|string|max:10',
+            'state' => 'nullable|string',
+            'race' => 'nullable|string',
             'linkedin_url' => 'nullable|url',
             'bio' => 'nullable|string',
         ]);
 
-        // Store all profile data in JSON format for admin approval
-        $profileData = [
+        // Directly update user profile
+        $user->update([
             'name' => $request->name,
             'email' => $request->email,
             'student_id' => $request->student_id,
@@ -46,19 +52,16 @@ class ProfileController extends Controller
             'current_position' => $request->current_position,
             'current_company' => $request->current_company,
             'phone_number' => $request->phone_number,
+            'gender' => $request->gender,
+            'birthdate' => $request->birthdate,
+            'address' => $request->address,
+            'postcode' => $request->postcode,
+            'state' => $request->state,
+            'race' => $request->race,
             'linkedin_url' => $request->linkedin_url,
             'bio' => $request->bio,
-        ];
-
-        // Create pending update request
-        \App\Models\UpdateRequest::create([
-            'user_id' => $user->id,
-            'new_full_name' => $request->name,
-            'file_path' => '',
-            'profile_data' => $profileData,
-            'status' => 'pending',
         ]);
 
-        return redirect()->route('profile.show')->with('success', 'Your profile update request has been submitted and is pending admin approval.');
+        return redirect()->route('profile.show')->with('success', 'Your profile has been updated successfully!');
     }
 }

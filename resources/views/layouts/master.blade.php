@@ -9,33 +9,48 @@
 </head>
 
 <body class="bg-gray-100 font-sans antialiased text-gray-900">
-    <nav class="bg-emerald-700 text-white p-4 shadow-md">
-        <div class="container mx-auto flex justify-between items-center">
-            <a href="{{ route('dashboard') }}"
-                class="text-xl font-bold flex items-center gap-2 hover:text-iium-gold transition">
-                <span class="text-iium-gold">KICT</span> Alumni
+    <!-- Navigation Bar -->
+    <nav class="bg-white text-gray-900 shadow-md">
+        <div class="container mx-auto flex justify-between items-center px-4 py-3">
+            <!-- Logo -->
+            <a href="{{ route('dashboard') }}" class="flex items-center">
+                <img src="{{ asset('images/iium-logo.png') }}" alt="IIUM Logo" class="h-14 object-contain">
             </a>
-            <div class="flex items-center gap-4">
+
+            <!-- Navigation Links -->
+            <div class="flex items-center gap-6">
                 @auth
-                    <a href="{{ route('dashboard') }}" class="hover:text-iium-gold transition">Dashboard</a>
-                    <a href="{{ route('profile.show') }}" class="hover:text-iium-gold transition">Profile</a>
-                    <a href="{{ route('achievements.index') }}" class="hover:text-iium-gold transition">Achievements</a>
-                    <a href="{{ route('feedback.create') }}" class="hover:text-iium-gold transition">Feedback</a>
-                    <span class="mr-2">Hello, <a href="{{ route('profile.show') }}"
-                            class="underline hover:text-iium-gold transition">{{ auth()->user()->name }}</a></span>
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                    @if(auth()->user()->role !== 'admin')
+                        <a href="{{ route('dashboard') }}"
+                            class="hover:text-gray-500 transition font-medium text-gray-900">Dashboard</a>
+                        <a href="{{ route('profile.show') }}"
+                            class="hover:text-gray-500 transition font-medium text-gray-900">Profile</a>
+                        <a href="{{ route('achievements.index') }}"
+                            class="hover:text-gray-500 transition font-medium text-gray-900">Achievements</a>
+                    @endif
+                    @if(auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.alumni') }}"
+                            class="hover:text-gray-500 transition font-medium text-gray-900">Manage Alumni</a>
+                    @endif
+                    <a href="{{ route('feedback.create') }}"
+                        class="hover:text-gray-500 transition font-medium text-gray-900">Feedback</a>
+                    <form action="{{ route('logout') }}" method="POST" class="inline ml-2">
                         @csrf
                         <button type="submit"
-                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition text-sm font-semibold shadow-sm">
+                            style="background-color: #ef4444; color: white; padding: 6px 20px; border-radius: 8px; font-weight: 600; font-size: 14px;">
                             Logout
                         </button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="mr-4 hover:text-iium-gold">Login</a>
-                    <a href="{{ route('register') }}" class="hover:text-iium-gold">Register</a>
+                    <a href="{{ route('login') }}"
+                        class="hover:text-gray-500 transition font-medium text-gray-900">Login</a>
+                    <a href="{{ route('register') }}"
+                        class="hover:text-gray-500 transition font-medium text-gray-900">Register</a>
                 @endauth
             </div>
         </div>
+        <!-- Green accent line -->
+        <div class="h-1 bg-emerald-600"></div>
     </nav>
 
     <main class="container mx-auto mt-8 p-4">

@@ -1,205 +1,465 @@
 @extends('layouts.master')
 
 @section('content')
-    <div class="max-w-6xl mx-auto p-6">
-        <!-- Header with User Greeting and Edit Button -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6 flex justify-between items-center">
-            <div class="flex items-center gap-4">
-                <div class="w-16 h-16 bg-emerald-700 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-800">Hi {{ explode(' ', $user->name)[0] }}!</h1>
-                    <p class="text-gray-500 text-sm">{{ $user->email }}</p>
-                </div>
+    <style>
+        /* Hide footer and prevent scrolling on this page */
+        footer {
+            display: none !important;
+        }
+
+        body {
+            overflow: hidden !important;
+        }
+
+        /* Make main container full width with green background */
+        main.container,
+        main {
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+            background: #3d8b7a !important;
+        }
+
+        /* Full page green gradient background with gold transition at bottom */
+        .profile-page {
+            background: linear-gradient(180deg, #3d8b7a 0%, #4a9a8a 60%, #b89c4d 100%) !important;
+            height: calc(100vh - 60px);
+            padding: 30px 50px;
+            overflow: auto;
+        }
+
+        /* Greeting Section */
+        .greeting-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .greeting-pill {
+            background-color: #f5f0e6;
+            padding: 15px 50px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .greeting-avatar {
+            width: 45px;
+            height: 45px;
+            background-color: #e8e0d0;
+            border-radius: 50%;
+        }
+
+        .greeting-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: #2d2d2d;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 25px;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #2d2d2d;
+        }
+
+        .action-btn-icon {
+            width: 55px;
+            height: 55px;
+            background-color: #e4a835;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn-icon svg {
+            width: 26px;
+            height: 26px;
+            color: #2d2d2d;
+        }
+
+        .action-btn span {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            display: flex;
+            gap: 25px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: linear-gradient(180deg, #4a9a8a 0%, #5aa898 100%);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .sidebar-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-align: left;
+            width: 100%;
+            background: transparent;
+            color: #2d2d2d;
+        }
+
+        .sidebar-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-btn.active {
+            background-color: #e4a835;
+            color: white;
+        }
+
+        .sidebar-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background-color: rgba(0, 0, 0, 0.15);
+            margin: 12px 0;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            color: #2d2d2d;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Content Card */
+        .content-area {
+            flex: 1;
+        }
+
+        .content-card {
+            background: linear-gradient(180deg, #5aa898 0%, #4a9a8a 100%);
+            border-radius: 20px;
+            padding: 30px 35px;
+            min-height: 450px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .info-group {
+            margin-bottom: 18px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: white;
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 20px;
+        }
+
+        /* Professional Section */
+        .achievement-item {
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .achievement-title {
+            font-weight: 600;
+            color: #0d3d3d;
+        }
+
+        .achievement-desc {
+            font-size: 14px;
+            color: #2d2d2d;
+            margin-top: 5px;
+        }
+
+        .add-achievement-btn {
+            background-color: #e4a835;
+            color: #2d2d2d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        .add-achievement-btn:hover {
+            background-color: #d49a2a;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .profile-page {
+                padding: 20px;
+            }
+
+            .main-content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .greeting-section {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .greeting-pill {
+                padding: 12px 30px;
+            }
+
+            .greeting-text {
+                font-size: 20px;
+            }
+        }
+    </style>
+
+    <div class="profile-page">
+        <!-- Greeting Section -->
+        <div class="greeting-section">
+            <div class="greeting-pill">
+                <div class="greeting-avatar"></div>
+                <span class="greeting-text">Hi {{ $user->name }}</span>
             </div>
-            <a href="{{ route('profile.edit') }}"
-                class="bg-emerald-700 text-white px-6 py-2 rounded shadow hover:bg-emerald-800 transition duration-200 font-bold flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                </svg>
-                Edit Profile
-            </a>
+            <div class="action-buttons">
+                <a href="{{ route('profile.edit') }}" class="action-btn">
+                    <div class="action-btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                    </div>
+                    <span>Edit Profile</span>
+                </a>
+            </div>
         </div>
 
         <!-- Main Content with Sidebar -->
-        <div class="flex gap-6">
-            <!-- Sidebar Menu -->
-            <div class="w-72 bg-gray-700 rounded-lg shadow-md p-4 h-fit">
-                <nav class="space-y-2">
-                    <button onclick="showSection('personal')" id="btn-personal"
-                        class="sidebar-btn w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-white hover:bg-emerald-600 transition active-tab">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+        <div class="main-content">
+            <!-- Sidebar Navigation -->
+            <div class="sidebar">
+                <nav class="sidebar-nav">
+                    <button onclick="showSection('personal')" id="btn-personal" class="sidebar-btn active">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                         </svg>
                         Personal Information
                     </button>
-                    <button onclick="showSection('academic')" id="btn-academic"
-                        class="sidebar-btn w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-white hover:bg-emerald-600 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+                    <button onclick="showSection('academic')" id="btn-academic" class="sidebar-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 14l9-5-9-5-9 5 9 5z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
                         </svg>
                         Academic Information
                     </button>
-                    <button onclick="showSection('professional')" id="btn-professional"
-                        class="sidebar-btn w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 text-white hover:bg-emerald-600 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd" />
-                            <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
+                    <button onclick="showSection('professional')" id="btn-professional" class="sidebar-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                         Professional Details
                     </button>
+
+                    <div class="sidebar-divider"></div>
+
+                    <a href="{{ route('dashboard') }}" class="back-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            style="width: 24px; height: 24px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Back to Dashboard
+                    </a>
                 </nav>
             </div>
 
             <!-- Content Area -->
-            <div class="flex-1">
-                <!-- Personal Information Section -->
-                <div id="section-personal" class="content-section bg-white rounded-lg shadow-md p-6 border-l-4 border-emerald-600">
-                    <h2 class="text-xl font-bold text-emerald-700 mb-6 pb-2 border-b">Personal Information</h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-gray-500 text-xs font-bold uppercase mb-1">Full Name</label>
-                            <p class="text-lg font-semibold text-gray-800">{{ $user->name }}</p>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-gray-500 text-xs font-bold uppercase mb-1">Email</label>
-                            <p class="text-gray-800">{{ $user->email }}</p>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-gray-500 text-xs font-bold uppercase mb-1">Phone Number</label>
-                            <p class="text-gray-800">{{ $user->phone_number ?? '-' }}</p>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-gray-500 text-xs font-bold uppercase mb-1">LinkedIn URL</label>
-                            @if($user->linkedin_url)
-                                <a href="{{ $user->linkedin_url }}" target="_blank" class="text-blue-600 hover:underline break-all">{{ $user->linkedin_url }}</a>
-                            @else
-                                <p class="text-gray-500">-</p>
-                            @endif
-                        </div>
-                        
-                        <div class="md:col-span-2">
-                            <label class="block text-gray-500 text-xs font-bold uppercase mb-1">Bio</label>
-                            <p class="text-gray-700 whitespace-pre-wrap">{{ $user->bio ?? 'No bio added.' }}</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="content-area">
+                <div class="content-card" style="background: linear-gradient(180deg, #5aa898 0%, #4a9a8a 100%) !important;">
+                    <!-- Personal Information Section -->
+                    <div id="section-personal" class="content-section active">
+                        <h2 class="section-title">Personal Information</h2>
 
-                <!-- Academic Information Section -->
-                <div id="section-academic" class="content-section bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500 hidden">
-                    <h2 class="text-xl font-bold text-blue-600 mb-6 pb-2 border-b">Academic Information</h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-gray-500 text-xs font-bold uppercase mb-1">Matric Number</label>
-                            <p class="text-lg font-semibold text-gray-800">{{ $user->student_id ?? 'N/A' }}</p>
+                        <div class="info-group">
+                            <div class="info-label">Full name</div>
+                            <div class="info-value">{{ $user->name }}</div>
                         </div>
-                        
-                        <div>
-                            <label class="block text-gray-500 text-xs font-bold uppercase mb-1">Program</label>
-                            <p class="text-gray-800">{{ $user->program ?? '-' }}</p>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-gray-500 text-xs font-bold uppercase mb-1">Graduation Year</label>
-                            <p class="text-gray-800">{{ $user->graduation_year ?? '-' }}</p>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-gray-500 text-xs font-bold uppercase mb-1">Account Role</label>
-                            <span class="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800 capitalize">
-                                {{ $user->role }}
-                            </span>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Professional Details Section -->
-                <div id="section-professional" class="content-section bg-white rounded-lg shadow-md p-6 border-l-4 border-amber-500 hidden">
-                    <h2 class="text-xl font-bold text-amber-600 mb-6 pb-2 border-b">Professional Details</h2>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div>
-                            <label class="block text-gray-500 text-xs font-bold uppercase mb-1">Current Position</label>
-                            <p class="text-lg font-semibold text-gray-800">{{ $user->current_position ?? '-' }}</p>
+                        <div class="info-group">
+                            <div class="info-label">Email</div>
+                            <div class="info-value">{{ $user->email }}</div>
                         </div>
-                        
-                        <div>
-                            <label class="block text-gray-500 text-xs font-bold uppercase mb-1">Current Company</label>
-                            <p class="text-gray-800">{{ $user->current_company ?? '-' }}</p>
+
+                        <div class="info-group">
+                            <div class="info-label">Phone Number</div>
+                            <div class="info-value">{{ $user->phone_number ?? '-' }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Gender</div>
+                            <div class="info-value">{{ $user->gender ?? '-' }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Birthdate</div>
+                            <div class="info-value">{{ $user->birthdate ? $user->birthdate->format('d/m/Y') : '-' }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Current Address</div>
+                            <div class="info-value">{{ $user->address ?? '-' }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Postcode</div>
+                            <div class="info-value">{{ $user->postcode ?? '-' }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">State</div>
+                            <div class="info-value">{{ $user->state ?? '-' }}</div>
                         </div>
                     </div>
 
-                    <!-- Achievements Section -->
-                    <div class="border-t pt-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-bold text-gray-700">My Achievements</h3>
-                            <a href="{{ route('achievements.create') }}" class="bg-amber-500 text-white px-4 py-2 rounded hover:bg-amber-600 transition text-sm font-bold">
-                                + Add Achievement
-                            </a>
+                    <!-- Academic Information Section -->
+                    <div id="section-academic" class="content-section">
+                        <h2 class="section-title">Academic Information</h2>
+
+                        <div class="info-group">
+                            <div class="info-label">Matric Number</div>
+                            <div class="info-value">{{ $user->student_id ?? '-' }}</div>
                         </div>
-                        
-                        @if($achievements->isEmpty())
-                            <div class="bg-gray-50 rounded-lg p-6 text-center text-gray-500">
-                                <p>You haven't added any achievements yet.</p>
+
+                        <div class="info-group">
+                            <div class="info-label">Program</div>
+                            <div class="info-value">{{ $user->program ?? '-' }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Graduation Year</div>
+                            <div class="info-value">{{ $user->graduation_year ?? '-' }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Account Role</div>
+                            <div class="info-value" style="text-transform: capitalize;">{{ $user->role }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Professional Details Section -->
+                    <div id="section-professional" class="content-section">
+                        <h2 class="section-title">Professional Details</h2>
+
+                        <div class="info-group">
+                            <div class="info-label">Current Position</div>
+                            <div class="info-value">{{ $user->current_position ?? '-' }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Current Company</div>
+                            <div class="info-value">{{ $user->current_company ?? '-' }}</div>
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">LinkedIn</div>
+                            <div class="info-value">
+                                @if($user->linkedin_url)
+                                    <a href="{{ $user->linkedin_url }}" target="_blank"
+                                        style="color: #0d3d3d; text-decoration: underline;">{{ $user->linkedin_url }}</a>
+                                @else
+                                    -
+                                @endif
                             </div>
-                        @else
-                            <div class="space-y-4">
-                                @foreach($achievements as $achievement)
-                                    <div class="bg-gray-50 rounded-lg p-4 flex justify-between items-start hover:bg-gray-100 transition">
-                                        <div>
-                                            <h4 class="font-bold text-gray-800">{{ $achievement->title }}</h4>
-                                            @if($achievement->description)
-                                                <p class="text-sm text-gray-600 mt-1">{{ Str::limit($achievement->description, 100) }}</p>
-                                            @endif
-                                            <p class="text-xs text-gray-400 mt-2">
-                                                {{ $achievement->event_date ? \Carbon\Carbon::parse($achievement->event_date)->format('d M Y') : '' }}
-                                            </p>
-                                        </div>
-                                        <div class="flex gap-2">
-                                            <a href="{{ route('achievements.edit', $achievement->id) }}" class="text-blue-600 hover:underline text-sm">Edit</a>
-                                            <form action="{{ route('achievements.destroy', $achievement->id) }}" method="POST" onsubmit="return confirm('Delete this achievement?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:underline text-sm">Delete</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
+                        </div>
+
+                        <div class="info-group">
+                            <div class="info-label">Bio</div>
+                            <div class="info-value">{{ $user->bio ?? '-' }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="mt-8 border-t pt-4">
-            <a href="{{ route('dashboard') }}" class="text-emerald-700 hover:underline">&larr; Back to Dashboard</a>
-        </div>
     </div>
-
-    <style>
-        .sidebar-btn.active-tab {
-            background-color: #059669; /* emerald-600 */
-        }
-    </style>
 
     <script>
         function showSection(section) {
             // Hide all sections
-            document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
             // Remove active class from all buttons
-            document.querySelectorAll('.sidebar-btn').forEach(el => el.classList.remove('active-tab'));
-            
+            document.querySelectorAll('.sidebar-btn').forEach(el => el.classList.remove('active'));
+
             // Show selected section
-            document.getElementById('section-' + section).classList.remove('hidden');
+            document.getElementById('section-' + section).classList.add('active');
             // Add active class to selected button
-            document.getElementById('btn-' + section).classList.add('active-tab');
+            document.getElementById('btn-' + section).classList.add('active');
         }
     </script>
 @endsection

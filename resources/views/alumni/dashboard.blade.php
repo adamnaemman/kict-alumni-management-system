@@ -1,106 +1,207 @@
 @extends('layouts.master')
 
 @section('content')
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold text-iium-green mb-6">Alumni Dashboard</h1>
+    <style>
+        /* Hide footer and prevent scrolling on this page */
+        footer {
+            display: none !important;
+        }
+
+        body {
+            overflow: hidden !important;
+        }
+
+        /* Make main container full width */
+        main.container,
+        main {
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+        }
+
+        /* Dashboard page styling */
+        .dashboard-page {
+            background: linear-gradient(180deg, #3d8b7a 0%, #4a9a8a 60%, #b89c4d 100%);
+            height: calc(100vh - 85px);
+            padding: 30px 50px;
+            overflow: auto;
+        }
+
+        /* Welcome text */
+        .welcome-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        /* Stats cards row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #c9a227 0%, #e4b82e 50%, #d4a520 100%);
+            border-radius: 12px;
+            padding: 20px 25px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-label {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 700;
+        }
+
+        /* Content sections row */
+        .content-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .content-card {
+            background: linear-gradient(135deg, #c9a227 0%, #e4b82e 50%, #d4a520 100%);
+            border-radius: 16px;
+            padding: 25px 30px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .content-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .item-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-info .item-title {
+            font-weight: 700;
+            color: #2d2d2d;
+            font-size: 16px;
+        }
+
+        .item-info .item-date {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .status-badge {
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .status-approved {
+            background-color: #22c55e;
+            color: white;
+        }
+
+        .status-rejected {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .status-pending {
+            background-color: #eab308;
+            color: white;
+        }
+
+        .empty-message {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .dashboard-page {
+                padding: 20px;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content-row {
+                grid-template-columns: 1fr;
+            }
+
+            .welcome-text {
+                font-size: 24px;
+            }
+        }
+    </style>
+
+    <div class="dashboard-page">
+        <!-- Welcome Section -->
+        <h1 class="welcome-text">Welcome Back, {{ $user->name }}!</h1>
 
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white p-4 rounded shadow border-l-4 border-blue-500">
-                <div class="text-gray-500 text-sm font-bold">Total Achievements</div>
-                <div class="text-2xl font-bold text-gray-800">{{ $stats['total'] }}</div>
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Total Achievements</div>
+                <div class="stat-value">{{ $stats['total'] }}</div>
             </div>
-            <div class="bg-white p-4 rounded shadow border-l-4 border-green-500">
-                <div class="text-gray-500 text-sm font-bold">Approved</div>
-                <div class="text-2xl font-bold text-gray-800">{{ $stats['approved'] }}</div>
+            <div class="stat-card">
+                <div class="stat-label">Approved</div>
+                <div class="stat-value">{{ $stats['approved'] }}</div>
             </div>
-            <div class="bg-white p-4 rounded shadow border-l-4 border-yellow-500">
-                <div class="text-gray-500 text-sm font-bold">Pending Review</div>
-                <div class="text-2xl font-bold text-gray-800">{{ $stats['pending'] }}</div>
+            <div class="stat-card">
+                <div class="stat-label">Pending Review</div>
+                <div class="stat-value">{{ $stats['pending'] }}</div>
             </div>
-            <div class="bg-white p-4 rounded shadow border-l-4 border-purple-500">
-                <div class="text-gray-500 text-sm font-bold">Feedback Sent</div>
-                <div class="text-2xl font-bold text-gray-800">{{ $stats['feedback'] }}</div>
+            <div class="stat-card">
+                <div class="stat-label">Feedback Sent</div>
+                <div class="stat-value">{{ $stats['feedback'] }}</div>
             </div>
         </div>
 
-        <!-- Recent Achievements -->
-        <div class="bg-white p-6 rounded shadow-md mb-8">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-iium-gold">My Achievements</h2>
-                <a href="{{ route('achievements.create') }}"
-                    class="text-sm bg-iium-green text-white px-3 py-1 rounded hover:bg-green-800">
-                    + Add New
-                </a>
-            </div>
-
-            @if($achievements->isEmpty())
-                <p class="text-gray-500">No achievements added yet.</p>
-            @else
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="border-b p-3 text-sm font-bold text-gray-700">Achievement</th>
-                                <th class="border-b p-3 text-sm font-bold text-gray-700">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($achievements->take(5) as $achievement)
-                                <tr class="hover:bg-gray-50 border-b last:border-0">
-                                    <td class="p-3">
-                                        <div class="font-bold text-gray-800">{{ $achievement->title }}</div>
-                                    </td>
-                                    <td class="p-3 text-gray-700 text-sm">
-                                        {{ $achievement->event_date ? \Carbon\Carbon::parse($achievement->event_date)->format('d M Y') : '-' }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                @if($achievements->count() > 5)
-                    <div class="mt-4 text-center">
-                        <a href="{{ route('achievements.index') }}" class="text-iium-green hover:underline text-sm font-bold">View
-                            All</a>
-                    </div>
+        <!-- Content Sections -->
+        <div class="content-row" style="grid-template-columns: 1fr;">
+            <!-- My Achievements -->
+            <div class="content-card">
+                <h2 class="content-title">My Achievement</h2>
+                @if($achievements->isEmpty())
+                    <p class="empty-message">No achievements added yet.</p>
+                @else
+                    @foreach($achievements->take(5) as $achievement)
+                        <div class="item-card">
+                            <div class="item-info">
+                                <div class="item-title">{{ $achievement->title }}</div>
+                                <div class="item-date">Date :
+                                    {{ $achievement->event_date ? \Carbon\Carbon::parse($achievement->event_date)->format('d M Y') : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                 @endif
-            @endif
-        </div>
-
-        <div class="bg-white p-6 rounded shadow-md">
-            <h2 class="text-xl font-semibold mb-4 text-iium-gold">My Update Requests</h2>
-            @if($requests->isEmpty())
-                <p>No requests submitted yet.</p>
-            @else
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr>
-                            <th class="border-b p-2">Date</th>
-                            <th class="border-b p-2">Requested Name</th>
-                            <th class="border-b p-2">Status</th>
-                            <th class="border-b p-2">Reason (if rejected)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($requests as $req)
-                            <tr class="hover:bg-gray-50">
-                                <td class="border-b p-2">{{ $req->created_at->format('d M Y') }}</td>
-                                <td class="border-b p-2">{{ $req->new_full_name }}</td>
-                                <td class="border-b p-2">
-                                    <span class="px-2 py-1 rounded text-xs font-bold
-                                                                                    @if($req->status == 'approved') bg-green-200 text-green-800
-                                                                                    @elseif($req->status == 'rejected') bg-red-200 text-red-800
-                                                                                    @else bg-yellow-200 text-yellow-800 @endif">
-                                        {{ ucfirst($req->status) }}
-                                    </span>
-                                </td>
-                                <td class="border-b p-2 text-red-600">{{ $req->rejection_reason }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @endif
+            </div>
         </div>
     </div>
 @endsection
