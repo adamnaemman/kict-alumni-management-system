@@ -13,14 +13,14 @@ class AlumniController extends Controller
         $userId = auth()->id();
         $requests = UpdateRequest::where('user_id', $userId)->get();
 
+        $achievements = \App\Models\Achievement::where('user_id', $userId)->latest()->get();
+
         $stats = [
-            'total' => $requests->count(),
+            'total' => $achievements->count(),
             'approved' => $requests->where('status', 'approved')->count(),
             'pending' => $requests->where('status', 'pending')->count(),
             'feedback' => \App\Models\Feedback::where('user_id', $userId)->count(),
         ];
-
-        $achievements = \App\Models\Achievement::where('user_id', $userId)->latest()->get();
 
         return view('alumni.dashboard', compact('user', 'requests', 'stats', 'achievements'));
     }

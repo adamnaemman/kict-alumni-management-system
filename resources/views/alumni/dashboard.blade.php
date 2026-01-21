@@ -40,7 +40,7 @@
         /* Stats cards row */
         .stats-row {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -167,14 +167,6 @@
             <div class="stat-card">
                 <div class="stat-label">Total Achievements</div>
                 <div class="stat-value">{{ $stats['total'] }}</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Approved</div>
-                <div class="stat-value">{{ $stats['approved'] }}</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Pending Review</div>
-                <div class="stat-value">{{ $stats['pending'] }}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Feedback Sent</div>

@@ -7,9 +7,7 @@
             display: none !important;
         }
 
-        body {
-            overflow: hidden !important;
-        }
+
 
         main.container,
         main {
